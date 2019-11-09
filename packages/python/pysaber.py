@@ -36,13 +36,7 @@ class DriveEsc:
             self.motor2 = self.FORWARD_2
 
         # Serial instantiation for UART Logic
-        x = os.system('ls /dev/serial/by-id/usb-Silicon_Labs_RoverESC_0001-if00-port0')
-        if x == 0:
-            self.port = '/dev/serial/by-id/usb-Silicon_Labs_RoverESC_0001-if00-port0'
-            print('ESC Rover')
-        else:
-            self.port = '/dev/serial/by-id/usb-Silicon_Labs_RoverUART_0001-if00-port0'
-            print('ESC Runt')
+        self.port = '/dev/serial/by-id/usb-Silicon_Labs_RoverESC_0001-if00-port0'
         self.saber = serial.Serial(self.port, '38400')
         self.address = address
 
