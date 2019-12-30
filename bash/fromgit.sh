@@ -19,7 +19,7 @@ fi
 while true; do
         read -p "Replace local SRC with GIT (Y\N)? $(tput setaf 1) warning this will overwrite current SRC contents $(tput sgr0): " yn
         case $yn in
-                [Yy]* ) rm -R /home/$HOSTNAME/catkin_ws/src;mv -T $GIT $SRC; rm -R /home/$HOSTNAME/gittemp/; printf "\n$(tput setaf 3)---Initiating ca$
+                [Yy]* ) rm -R /home/$HOSTNAME/catkin_ws/src;mv -T $GIT $SRC; rm -R /home/$HOSTNAME/gittemp/; printf "\n$(tput setaf 3)---Initiating catkin_make---\n$(tput sgr0)";  cd /home/gordon/catkin_ws; source devel/setup.bash; catkin_make;break;;
                 [Nn]* ) echo "exiting.";rm -R /home/$HOSTNAME/gittemp;exit;; #if no then remove the temp GIT clone folder
                 *) echo "Please answer Y or N.";;
         esac
