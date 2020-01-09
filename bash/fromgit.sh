@@ -1,4 +1,8 @@
 #!/bin/bash
+
+#NOTE: systemd service to start this at boot is called roverui.service
+#TODO: update script and accompanying js file to write the PID to /tmp and have this bash script check it as to not create multiple instances
+
 cd /home/$HOSTNAME
 mkdir gittemp #make a folder, clone the given repo into it
 cd gittemp
