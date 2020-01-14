@@ -1,9 +1,6 @@
 from pyb import Pin, Timer, UART, ADC
 import pyb
 import time
-#First driver EN: X12, DIR: X11, Pwm: X1
-#Second driver EN: X10, DIR: X9, Pwm: X2
-#Third driver EN: X8, DIR: X7, Pwm: X3
 
 #TODO: Add 1 DC motor and 1 limit switch
 
@@ -29,7 +26,6 @@ def getcommand():
                 move = ser.read(3)
                 move = move.decode('utf-8')
                 if str(move[2]) == 'e':
-                    #ledMove[int(move[0])][int(move[1])]()
                     pyb.LED(3).toggle();
                     movements[int(move[0])][int(move[1])]()
                     pyb.LED(3).toggle();
