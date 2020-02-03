@@ -27,6 +27,33 @@ servo_state2 = [0]
 servo_state3 = [0]
 dc_state1 = [0]
 
+# Handles counting encoder steps
+def step_count(A, B):
+    global phase, last_phase
+    
+    # Gets previous phase state
+    last_phase = phase
+
+    # Evaluates the encoder pins to determine phase
+    if A.value():
+        if B.value():
+            phase = 1
+        else:
+            phase = 2
+    else:
+        if B.value():
+            phase = 4
+        else:
+            phase = 3
+
+    global count
+
+    # Evaluates phase change to determine step (incre/decre)ment
+    if (last_phase == 4) & (phase == 1):
+        count += 1
+    elif (last_phase == 1) & (phase == 4):
+        count -= 1
+
 Pins = {
         #Sci Assay
         0 : {
@@ -71,53 +98,14 @@ Pins = {
             }
 }
 
-# Driver function for top encoder step_count
+# Driver function for top encoder interrupt
 def top_count(line):
-    global phase
-    global last_phase
-    global pin_t_A, pin_t_B
-    last_phase = phase
-    if pin_t_A.value() == 0:  # Might be able to use Pins[0][0][3].value()
-        if pin_t_B.value() == 0:
-            phase = 1
-        else:
-            phase = 2
-    else:
-        if pin_t_B.value() == 0:
-            phase = 4
-        else:
-            phase = 3
+    step_count(Pins[0][0][3], Pins[0][0][4])
 
-    global count
-    if (last_phase == 4) & (phase == 1):
-        count += 1
-    elif (last_phase == 1) & (phase == 4):
-        count -= 1
-
-# Driver function for bottom encoder step_count
+# Driver function for bottom encoder interrupt
 def bot_count(line):
-    global phase
-    global last_phase
-    global pin_b_A, pin_b_B
-    last_phase = phase
-    if pin_b_A.value() == 0:
-        if pin_b_B.value() == 0:
-            phase = 1
-        else:
-            phase = 2
-    else:
-        if pin_b_B.value() == 0:
-            phase = 4
-        else:
-            phase = 3
-
-    global count
-    if (last_phase == 4) & (phase == 1):
-        count += 1
-    elif (last_phase == 1) & (phase == 4):
-        count -= 1
-        # print('phase: ' + str(phase))
-
+    step_count(Pins[0][1][3], Pins[0][1][4])
+    
 # External Interrupt Pins and Object for the Top Motor Encoder
 pin_t_A = Pins[0][0][3]
 pin_t_B = Pins[0][0][4]
@@ -224,21 +212,15 @@ def getCommand():
 
 if __name__ == "__main__":
     #Testing buttons
-    # but_top_cw = Pin('Y6', Pin.IN, Pin.PULL_NONE)
-    # but_top_ccw = Pin('Y7', Pin.IN, Pin.PULL_NONE)
-    # but_bot_ccw = Pin('Y8', Pin.IN, Pin.PULL_NONE)
-    # but_part_1 = Pin('X9', Pin.IN, Pin.PULL_NONE)
-    # but_part_2 = Pin('X10', Pin.IN, Pin.PULL_NONE)
-    # but_part_3 = Pin('X11', Pin.IN, Pin.PULL_NONE)
-    # but_vibrator = Pin('X12', Pin.IN, Pin.PULL_NONE)
-
-    # while True:
-    #     if(but_top_cw.value()):
-    #         eval(soilAction[0][0][0])
-    #     elif(but_top_ccw.value()):
-    #         eval(soilAction[0][0][1])
-    #     elif(but_part_1.value()):
-    #         eval(soilAction[1][0][0])
+    but_top_cw = Pin('Y6', Pin.IN, Pin.PULL_NONE)
+    but_top_ccw = Pin('Y7', Pin.IN, Pin.PULL_NONE)
+    but_top_ccw2 = Pin('Y4', Pin.IN, Pin.PULL_NONE)
+    but_bot_ccw = Pin('Y8', Pin.IN, Pin.PULL_NONE)
+    but_part_1 = Pin('X9', Pin.IN, Pin.PULL_NONE)
+    but_part_2 = Pin('X10', Pin.IN, Pin.PULL_NONE)
+    but_part_3 = Pin('X11', Pin.IN, Pin.PULL_NONE)
+    but_vibrator_go = Pin('X12', Pin.IN, Pin.PULL_NONE)
+    but_vibrator_stop = Pin('Y5', Pin.IN, Pin.PULL_NONE)
 
     # Setup all the ports and devices to default states
     eval(Pins[0][0][0])
@@ -251,5 +233,27 @@ if __name__ == "__main__":
     Pins[1][2][0].angle(-180)
 
     stopVibrator(Pins[2][0][0],Pins[2][0][1])
-    
-    getCommand()
+
+    while True:
+        if(but_top_cw.value()):
+            eval(soilAction[0][0][0])
+        elif(but_top_ccw.value()):
+            eval(soilAction[0][0][1])
+        elif(but_top_ccw2.value()):
+            eval(soilAction[0][0][2])
+        elif(but_bot_ccw.value()):
+            eval(soilAction[0][1][0])
+
+        elif(but_part_1.value()):
+            eval(soilAction[1][0][0])
+        elif(but_part_2.value()):
+            eval(soilAction[1][1][0])
+        elif(but_part_3.value()):
+            eval(soilAction[1][2][0])
+
+        elif(but_vibrator_go.value()):
+            eval(soilAction[2][0][0])
+        elif(but_vibrator_stop.value()):
+            eval(soilAction[2][0][1])
+
+    # getCommand()
